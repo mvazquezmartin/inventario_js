@@ -1,0 +1,21 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+
+h1{
+	text-align: center;
+}
+
+.myRow{
+	display: flex;
+	flex-direction: row;	
+	justify-content: flex-start;
+	margin-top: 5%;
+}
+
+.datosCol{
+	display:flex;
+	text-align: center;
+	flex-direction: column;
+}
