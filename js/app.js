@@ -4,12 +4,12 @@ const miLocalStorage = window.localStorage;
 const baseDeDatos = [];
 
 //Query de elementos
-const cardProducto = document.querySelector("#cardProductos");
-const btnBuscar = document.querySelector("#btnMainBuscar");
+const cardProducto = document.getElementById("cardProductos");
+const btnBuscar = document.getElementById("btnMainBuscar");
 const btnAgregar = document.getElementById("btnMainAgregar");
 const btnBorrar = document.getElementById("btnBorrar");
 const btnModificar = document.getElementById("btnModificar");
-const inputDatos = document.querySelector("#inputDatos");
+const inputDatos = document.getElementById("inputDatos");
 
 //Funciones
 const productosCardRender = () => {
@@ -31,8 +31,8 @@ const productosCardRender = () => {
 };
 
 const renderBtnBuscar = () => {
-  document.querySelector("#inputDatos").innerHTML = "";
-  document.querySelector("#cardProductos").innerHTML = "";
+  document.getElementById("inputDatos").innerHTML = "";
+  document.getElementById("cardProductos").innerHTML = "";
   productosCardRender();
   const DOMinput = document.createElement("div");
   DOMinput.innerHTML = `
@@ -47,7 +47,7 @@ const renderBtnBuscar = () => {
   function buscarProd() {
     const prod = inventario.find((prod) => prod.id === parseInt(id.value));
     if (prod !== undefined) {
-      document.querySelector("#cardProductos").innerHTML = "";
+      document.getElementById("cardProductos").innerHTML = "";
       const card = document.createElement("div");
       card.classList.add("card", "col-lg-3", "m-1");
       card.style.width = "18rem";
@@ -70,8 +70,8 @@ const renderBtnBuscar = () => {
 };
 
 const renderBtnAgregar = () => {
-  document.querySelector("#inputDatos").innerHTML = "";
-  document.querySelector("#cardProductos").innerHTML = "";
+  document.getElementById("inputDatos").innerHTML = "";
+  document.getElementById("cardProductos").innerHTML = "";
   productosCardRender();
   const DOMinput = document.createElement("div");
   DOMinput.innerHTML = `
@@ -106,15 +106,15 @@ const renderBtnAgregar = () => {
       DOMcantidad
     );
     inventario.push(nuevoProducto);
-    document.querySelector("#cardProductos").innerHTML = "";
+    document.getElementById("cardProductos").innerHTML = "";
     productosCardRender();
     guardarLocalStorage();
   }
 };
 
 const renderBtnBorrar = () => {
-  document.querySelector("#inputDatos").innerHTML = "";
-  document.querySelector("#cardProductos").innerHTML = "";
+  document.getElementById("inputDatos").innerHTML = "";
+  document.getElementById("cardProductos").innerHTML = "";
   productosCardRender();
   const DOMinput = document.createElement("div");
   DOMinput.innerHTML = `
@@ -137,15 +137,15 @@ const renderBtnBorrar = () => {
     } else {
       Swal.fire("No hay producto con esa ID", " ", "error");
     }
-    document.querySelector("#cardProductos").innerHTML = "";
+    document.getElementById("cardProductos").innerHTML = "";
     productosCardRender();
     guardarLocalStorage();
   }
 };
 
 const renderBtnModificar = () => {
-  document.querySelector("#inputDatos").innerHTML = "";
-  document.querySelector("#cardProductos").innerHTML = "";
+  document.getElementById("inputDatos").innerHTML = "";
+  document.getElementById("cardProductos").innerHTML = "";
   productosCardRender();
   const DOMinput = document.createElement("div");
   DOMinput.innerHTML = `
@@ -168,9 +168,9 @@ const renderBtnModificar = () => {
   btnAccionModificar.addEventListener("click", modificarProducto);
   inputDatos.append(DOMinput);
   function modificarProducto() {
-    let modificar = id.value;
+    let modificar = parseInt(id.value);
     for (const producto of inventario) {
-      if (producto.id === parseInt(modificar)) {
+      if (producto.id === modificar) {
         producto.id = parseInt(id.value);
         producto.img = "cocaZeroMini.jpg";
         producto.nombre = nombre.value;
@@ -178,7 +178,7 @@ const renderBtnModificar = () => {
         producto.cantidad = cantidad.value;
       }
     }
-    document.querySelector("#cardProductos").innerHTML = "";
+    document.getElementById("cardProductos").innerHTML = "";
     productosCardRender();
     guardarLocalStorage();
   }
