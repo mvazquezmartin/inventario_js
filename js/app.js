@@ -11,7 +11,8 @@ const btnBorrar = document.getElementById("btnBorrar");
 const inputDatos = document.getElementById("inputDatos");
 
 //Funciones
-
+const findProd = (idFind) =>
+  inventario.find((prod) => prod.id === parseInt(idFind.value));
 
 // RENDER ITEM CARD //
 const productosCardRender = (array = inventario) => {
@@ -61,7 +62,6 @@ const productosCardRender = (array = inventario) => {
   });
 };
 
-
 // BUSCAR //
 const renderBtnBuscar = () => {
   inputDatos.innerHTML = "";
@@ -80,7 +80,7 @@ const renderBtnBuscar = () => {
   miNodoIdInput.setAttribute("id", "prodId");
   //BTN BUSCAR
   const miNodoBtnBuscar = document.createElement("button");
-  miNodoBtnBuscar.classList.add("m-1", "btn-info");
+  miNodoBtnBuscar.classList.add("m-1", "btn", "btn-info");
   miNodoBtnBuscar.setAttribute("type", "submit");
   miNodoBtnBuscar.setAttribute("value", "Buscar");
   miNodoBtnBuscar.setAttribute("id", "btnAccionBuscar");
@@ -96,7 +96,7 @@ const renderBtnBuscar = () => {
 
   const id = document.getElementById("prodId");
   function buscarProd() {
-    const prod = inventario.find((prod) => prod.id === parseInt(id.value));
+    const prod = findProd(id);
     if (prod !== undefined) {
       const rtaBusqueda = [prod];
       cardProducto.innerHTML = "";
@@ -108,7 +108,6 @@ const renderBtnBuscar = () => {
     }
   }
 };
-
 
 // AGREGAR Y MODIFICAR //
 const renderBtnAgregarModificar = () => {
@@ -152,14 +151,14 @@ const renderBtnAgregarModificar = () => {
   miNodoInputCantidad.setAttribute("id", "cantidad");
   // BTN AGREGAR
   const miNodoBtnAgregar = document.createElement("button");
-  miNodoBtnAgregar.classList.add("mb-1", "btn-info");
+  miNodoBtnAgregar.classList.add("m-1", "btn", "btn-info");
   miNodoBtnAgregar.setAttribute("type", "submit");
   miNodoBtnAgregar.setAttribute("value", "agregar");
   miNodoBtnAgregar.setAttribute("id", "btnAccionAgregar");
   miNodoBtnAgregar.textContent = "AGREGAR";
   // BTN MODIFiCAR
   const miNodoBtnModificar = document.createElement("button");
-  miNodoBtnModificar.classList.add("mb-1", "btn-info");
+  miNodoBtnModificar.classList.add("m-1", "btn", "btn-warning");
   miNodoBtnModificar.setAttribute("type", "submit");
   miNodoBtnModificar.setAttribute("value", "Modificar");
   miNodoBtnModificar.setAttribute("id", "btnAccionModificar");
@@ -180,15 +179,18 @@ const renderBtnAgregarModificar = () => {
   const precio = document.getElementById("precio");
   const cantidad = document.getElementById("cantidad");
 
-  //FUNCION AGREGAR || MODIFICAR
+  //FUNCION  MODIFICAR || AGREGAR
   id.addEventListener("focusout", idUnico);
+  id.addEventListener("focusin", () => {
+    miNodoInputNombre.setAttribute("value", "");
+    miNodoInputPrecio.setAttribute("value", "");
+    miNodoInputCantidad.setAttribute("value", "");
+  });
   function idUnico() {
-    const prod = inventario.find((prod) => prod.id === parseInt(id.value));
-
+    const prod = findProd(id);
     if (id.value == "") {
       return;
     }
-
     if (prod) {
       miNodoInputNombre.setAttribute("value", `${prod.nombre}`);
       miNodoInputPrecio.setAttribute("value", `${prod.precio}`);
@@ -199,12 +201,11 @@ const renderBtnAgregarModificar = () => {
       if (btnAccionAgregar) {
         miNodo.removeChild(btnAccionAgregar);
       }
-
       const btnAccionModificar = document.getElementById("btnAccionModificar");
       if (!btnAccionModificar) {
         miNodo.appendChild(miNodoBtnModificar);
-        btnAccionModificar.addEventListener("click", modificarProducto);
       }
+      btnAccionModificar.addEventListener("click", modificarProducto);
       function modificarProducto() {
         let modificar = parseInt(id.value);
         for (const producto of inventario) {
@@ -217,6 +218,11 @@ const renderBtnAgregarModificar = () => {
         cardProducto.innerHTML = "";
         productosCardRender();
         guardarLocalStorage();
+        Swal.fire(
+          `¡Modificación exitosa! </br> Producto ID: ${id.value}`,
+          "",
+          "success"
+        );
       }
       return;
     } else {
@@ -224,18 +230,12 @@ const renderBtnAgregarModificar = () => {
       if (btnAccionModificar) {
         miNodo.removeChild(btnAccionModificar);
       }
-
-      miNodoInputNombre.setAttribute("value", "");
-      miNodoInputPrecio.setAttribute("value", "");
-      miNodoInputCantidad.setAttribute("value", "");
       miNodo.appendChild(miNodoBtnAgregar);
-
       const btnAccionAgregar = document.getElementById("btnAccionAgregar");
       if (!btnAccionAgregar) {
         miNodo.appendChild(miNodoBtnAgregar);
-        btnAccionAgregar.addEventListener("click", crearProducto);
       }
-
+      btnAccionAgregar.addEventListener("click", crearProducto);
       function crearProducto() {
         const DOMid = id.value;
         const DOMimg = "cocaZeroMini.jpg";
@@ -254,12 +254,16 @@ const renderBtnAgregarModificar = () => {
         cardProducto.innerHTML = "";
         productosCardRender();
         guardarLocalStorage();
+        Swal.fire(
+          `Nuevo Producto Agregado </br> Prod ID: ${id.value}`,
+          "",
+          "success"
+        );
       }
       return;
     }
   }
 };
-
 
 // BORRAR //
 const renderBtnBorrar = () => {
@@ -279,7 +283,7 @@ const renderBtnBorrar = () => {
   miNodoIdInput.setAttribute("id", "prodId");
   //BTN BORRAR
   const miNodoBtnBorrar = document.createElement("button");
-  miNodoBtnBorrar.classList.add("m-1", "btn-danger");
+  miNodoBtnBorrar.classList.add("m-1", "btn", "btn-danger");
   miNodoBtnBorrar.setAttribute("type", "submit");
   miNodoBtnBorrar.setAttribute("value", "Buscar");
   miNodoBtnBorrar.setAttribute("id", "btnAccionBorrar");
@@ -295,16 +299,14 @@ const renderBtnBorrar = () => {
   btnAccionBorrar.addEventListener("click", borrarProducto);
 
   function borrarProducto() {
-    const prodBorrar = inventario.find(
-      (prod) => prod.id === parseInt(id.value)
-    );
-    const indexId = inventario.indexOf(prodBorrar);
-    if (indexId !== -1) {
-      let elemento = indexId;
+    const prodBorrar = inventario.indexOf(findProd(id));
+    /* const indexId = inventario.indexOf(prodBorrar); */
+    if (prodBorrar !== -1) {
+      let elemento = prodBorrar;
       inventario.splice(elemento, 1);
-      Swal.fire(`Producto ID:${prodBorrar.id} </br> Eliminado`, "", "success");
+      Swal.fire(`Producto Eliminado </br> ID:${id.value} `, "", "success");
     } else {
-      Swal.fire(`No hay producto con ID:${id.value}`, " ", "error");
+      Swal.fire(`No existe producto </br> con ID:${id.value}`, " ", "error");
     }
     cardProducto.innerHTML = "";
     productosCardRender();
