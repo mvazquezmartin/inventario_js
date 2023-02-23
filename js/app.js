@@ -8,177 +8,305 @@ const cardProducto = document.getElementById("cardProductos");
 const btnBuscar = document.getElementById("btnMainBuscar");
 const btnAgregar = document.getElementById("btnMainAgregar");
 const btnBorrar = document.getElementById("btnBorrar");
-const btnModificar = document.getElementById("btnModificar");
 const inputDatos = document.getElementById("inputDatos");
 
 //Funciones
-const productosCardRender = () => {
-  inventario.forEach((producto) => {
-    const card = document.createElement("div");
-    card.classList.add("card", "col-lg-3", "m-1");
-    card.style.width = "18rem";
-    card.innerHTML = `
-      <img src="assets/${producto.img}" class="card-img-top" alt="${producto.nombre}">
-      <div class="card-body">
-        <h5 class="card-title">${producto.nombre}</h5>
-        <p class="card-text">Id Producto:${producto.id}</p> 
-        <p class="card-text">Precio unitario:$${producto.precio}</p>
-        <p class="card-text">Unidades:${producto.cantidad}</p>             
-      </div>
-    `;
-    cardProducto.append(card);
+
+
+// RENDER ITEM CARD //
+const productosCardRender = (array = inventario) => {
+  array.forEach((producto) => {
+    //ESTRUCTURA
+    const miNodo = document.createElement("div");
+    miNodo.classList.add("card", "m-1", "rounded-3", "border", "border-2");
+    miNodo.style.width = "16rem";
+    //IMAGEN
+    const miNodoImg = document.createElement("img");
+    miNodoImg.classList.add(
+      "img-fluid",
+      "rounded-3",
+      "rounted-top",
+      "border-bottom",
+      "border-2"
+    );
+    const imgProd = `../assets/${producto.img}`;
+    miNodoImg.setAttribute("src", imgProd);
+    miNodoImg.setAttribute("alt", producto.nombre);
+    //BODYCARD
+    const miNodoBodyCard = document.createElement("div");
+    miNodoBodyCard.classList.add("card-body");
+    //TITULOCARD
+    const miNodoTitle = document.createElement("h5");
+    miNodoTitle.classList.add("cartd-title");
+    miNodoTitle.textContent = `${producto.nombre}`;
+    //ID PRODUCTO
+    const miNodoId = document.createElement("p");
+    miNodoId.classList.add("card-text");
+    miNodoId.textContent = `ID Producto:${producto.id}`;
+    //PRECIO
+    const miNodoPrecio = document.createElement("p");
+    miNodoPrecio.classList.add("card-text");
+    miNodoPrecio.textContent = `Precio unitario:$${producto.precio}`;
+    //UNIDADES
+    const miNodoUnidades = document.createElement("p");
+    miNodoUnidades.classList.add("card-text");
+    miNodoUnidades.textContent = `Unidades:${producto.cantidad}`;
+    //INSERTAR MINODO
+    miNodo.appendChild(miNodoImg);
+    miNodo.appendChild(miNodoBodyCard);
+    miNodoBodyCard.appendChild(miNodoId);
+    miNodoBodyCard.appendChild(miNodoUnidades);
+    miNodoBodyCard.appendChild(miNodoPrecio);
+    cardProducto.appendChild(miNodo);
   });
 };
 
+
+// BUSCAR //
 const renderBtnBuscar = () => {
-  document.getElementById("inputDatos").innerHTML = "";
-  document.getElementById("cardProductos").innerHTML = "";
+  inputDatos.innerHTML = "";
+  cardProducto.innerHTML = "";
   productosCardRender();
-  const DOMinput = document.createElement("div");
-  DOMinput.innerHTML = `
-  <div>ID</div>
-  <input class="mb-1" type="number" id="prodId">
-  <input class="mb-1 btn-info" type="submit" value="Buscar" id="btnAccionBuscar">
-  `;
-  inputDatos.append(DOMinput);
+  //BUSCAR INPUT ESTRUCTURA
+  const miNodo = document.createElement("div");
+  miNodo.classList.add("my-1", "d-flex", "flex-column");
+  //TITULO ID
+  const miNodoTitulo = document.createElement("div");
+  miNodoTitulo.textContent = "ID";
+  //INPUT ID
+  const miNodoIdInput = document.createElement("input");
+  miNodoIdInput.classList.add("mb-1");
+  miNodoIdInput.setAttribute("type", "number");
+  miNodoIdInput.setAttribute("id", "prodId");
+  //BTN BUSCAR
+  const miNodoBtnBuscar = document.createElement("button");
+  miNodoBtnBuscar.classList.add("m-1", "btn-info");
+  miNodoBtnBuscar.setAttribute("type", "submit");
+  miNodoBtnBuscar.setAttribute("value", "Buscar");
+  miNodoBtnBuscar.setAttribute("id", "btnAccionBuscar");
+  miNodoBtnBuscar.textContent = "Buscar";
+  //INSERTAR MINODO
+  miNodo.appendChild(miNodoTitulo);
+  miNodo.appendChild(miNodoIdInput);
+  miNodo.appendChild(miNodoBtnBuscar);
+  inputDatos.appendChild(miNodo);
+
+  const btnAccionBuscar = document.getElementById("btnAccionBuscar");
   btnAccionBuscar.addEventListener("click", buscarProd);
 
   const id = document.getElementById("prodId");
   function buscarProd() {
     const prod = inventario.find((prod) => prod.id === parseInt(id.value));
     if (prod !== undefined) {
-      document.getElementById("cardProductos").innerHTML = "";
-      const card = document.createElement("div");
-      card.classList.add("card", "col-lg-3", "m-1");
-      card.style.width = "18rem";
-      card.innerHTML = `
-          <img src="assets/${prod.img}" class="card-img-top" alt="${prod.nombre}">
-          <div class="card-body">
-          <p class="card-text">Unidades:${prod.cantidad}</p>
-          <h5 class="card-title">${prod.nombre}</h5>
-          <p class="card-text">Id Producto:${prod.id}</p> 
-          <p class="card-text">Precio unitario:$${prod.precio}</p>          
-          </div>
-        `;
-      cardProducto.append(card);
+      const rtaBusqueda = [prod];
+      cardProducto.innerHTML = "";
+      productosCardRender(rtaBusqueda);
       return;
     } else {
-      Swal.fire("No existe ese producto", " ", "error");
+      Swal.fire(`No existe el ID:${id.value}`, " ", "error");
       return;
     }
   }
 };
 
-const renderBtnAgregar = () => {
-  document.getElementById("inputDatos").innerHTML = "";
-  document.getElementById("cardProductos").innerHTML = "";
+
+// AGREGAR Y MODIFICAR //
+const renderBtnAgregarModificar = () => {
+  inputDatos.innerHTML = "";
+  cardProducto.innerHTML = "";
   productosCardRender();
-  const DOMinput = document.createElement("div");
-  DOMinput.innerHTML = `
-  <div>ID</div>
-  <input class="mb-1" type="number" id="prodId">
-  <div>NOMBRE</div>
-  <input class="mb-1" type="text" id="nombre">
-  <div>PRECIO</div>
-  <input class="mb-1" type="number" id="precio">
-  <div>CANTIDAD</div>
-  <input class="mb-1" type="number" id="cantidad"><br>
-  <input class="mb-1 btn-info" type="submit" value="Agregar" id="btnAccionAgregar">
-  `;
-  inputDatos.append(DOMinput);
+  //INPUT AGREGAR&MODIFICAR ESTRUCTURA
+  const miNodo = document.createElement("div");
+  miNodo.classList.add("d-flex", "flex-column", "my-1");
+  // TITULO ID
+  const miNodoTitleId = document.createElement("div");
+  miNodoTitleId.textContent = "ID";
+  // INPUT ID
+  const miNodoInputId = document.createElement("input");
+  miNodoInputId.classList.add("mb-1");
+  miNodoInputId.setAttribute("type", "number");
+  miNodoInputId.setAttribute("id", "prodId");
+  // TITULO NOMBRE PRODUCTO
+  const miNodoTitleNombre = document.createElement("div");
+  miNodoTitleNombre.textContent = "NOMBRE";
+  // INPUT NOMBRE PRODUCTO
+  const miNodoInputNombre = document.createElement("input");
+  miNodoInputNombre.classList.add("mb-1");
+  miNodoInputNombre.setAttribute("type", "text");
+  miNodoInputNombre.setAttribute("id", "nombre");
+  // TITULO PRECIO
+  const miNodoTitlePrecio = document.createElement("div");
+  miNodoTitlePrecio.textContent = "PRECIO";
+  // INPUT PRECIO
+  const miNodoInputPrecio = document.createElement("input");
+  miNodoInputPrecio.classList.add("mb-1");
+  miNodoInputPrecio.setAttribute("type", "text");
+  miNodoInputPrecio.setAttribute("id", "precio");
+  // TITULO CANTIDAD
+  const miNodoTitleCantidad = document.createElement("div");
+  miNodoTitleCantidad.textContent = "CANTIDAD";
+  // INPUT CANTIDAD
+  const miNodoInputCantidad = document.createElement("input");
+  miNodoInputCantidad.classList.add("mb-1");
+  miNodoInputCantidad.setAttribute("type", "number");
+  miNodoInputCantidad.setAttribute("id", "cantidad");
+  // BTN AGREGAR
+  const miNodoBtnAgregar = document.createElement("button");
+  miNodoBtnAgregar.classList.add("mb-1", "btn-info");
+  miNodoBtnAgregar.setAttribute("type", "submit");
+  miNodoBtnAgregar.setAttribute("value", "agregar");
+  miNodoBtnAgregar.setAttribute("id", "btnAccionAgregar");
+  miNodoBtnAgregar.textContent = "AGREGAR";
+  // BTN MODIFiCAR
+  const miNodoBtnModificar = document.createElement("button");
+  miNodoBtnModificar.classList.add("mb-1", "btn-info");
+  miNodoBtnModificar.setAttribute("type", "submit");
+  miNodoBtnModificar.setAttribute("value", "Modificar");
+  miNodoBtnModificar.setAttribute("id", "btnAccionModificar");
+  miNodoBtnModificar.textContent = "MODIFICAR";
+  //INSERTAR MINODO
+  miNodo.appendChild(miNodoTitleId);
+  miNodo.appendChild(miNodoInputId);
+  miNodo.appendChild(miNodoTitleNombre);
+  miNodo.appendChild(miNodoInputNombre);
+  miNodo.appendChild(miNodoTitlePrecio);
+  miNodo.appendChild(miNodoInputPrecio);
+  miNodo.appendChild(miNodoTitleCantidad);
+  miNodo.appendChild(miNodoInputCantidad);
+  inputDatos.appendChild(miNodo);
 
   const id = document.getElementById("prodId");
   const nombre = document.getElementById("nombre");
   const precio = document.getElementById("precio");
   const cantidad = document.getElementById("cantidad");
-  btnAccionAgregar.addEventListener("click", crearProducto);
-  function crearProducto() {
-    const DOMid = id.value;
-    const DOMimg = "cocaZeroMini.jpg";
-    const DOMnombre = nombre.value;
-    const DOMprecio = precio.value;
-    const DOMcantidad = cantidad.value;
-    let nuevoProducto = new Productos(
-      DOMid,
-      DOMimg,
-      DOMnombre,
-      DOMprecio,
-      DOMcantidad
-    );
-    inventario.push(nuevoProducto);
-    document.getElementById("cardProductos").innerHTML = "";
-    productosCardRender();
-    guardarLocalStorage();
+
+  //FUNCION AGREGAR || MODIFICAR
+  id.addEventListener("focusout", idUnico);
+  function idUnico() {
+    const prod = inventario.find((prod) => prod.id === parseInt(id.value));
+
+    if (id.value == "") {
+      return;
+    }
+
+    if (prod) {
+      miNodoInputNombre.setAttribute("value", `${prod.nombre}`);
+      miNodoInputPrecio.setAttribute("value", `${prod.precio}`);
+      miNodoInputCantidad.setAttribute("value", `${prod.cantidad}`);
+      miNodo.appendChild(miNodoBtnModificar);
+
+      const btnAccionAgregar = document.getElementById("btnAccionAgregar");
+      if (btnAccionAgregar) {
+        miNodo.removeChild(btnAccionAgregar);
+      }
+
+      const btnAccionModificar = document.getElementById("btnAccionModificar");
+      if (!btnAccionModificar) {
+        miNodo.appendChild(miNodoBtnModificar);
+        btnAccionModificar.addEventListener("click", modificarProducto);
+      }
+      function modificarProducto() {
+        let modificar = parseInt(id.value);
+        for (const producto of inventario) {
+          if (producto.id === modificar) {
+            producto.nombre = nombre.value;
+            producto.precio = precio.value;
+            producto.cantidad = cantidad.value;
+          }
+        }
+        cardProducto.innerHTML = "";
+        productosCardRender();
+        guardarLocalStorage();
+      }
+      return;
+    } else {
+      const btnAccionModificar = document.getElementById("btnAccionModificar");
+      if (btnAccionModificar) {
+        miNodo.removeChild(btnAccionModificar);
+      }
+
+      miNodoInputNombre.setAttribute("value", "");
+      miNodoInputPrecio.setAttribute("value", "");
+      miNodoInputCantidad.setAttribute("value", "");
+      miNodo.appendChild(miNodoBtnAgregar);
+
+      const btnAccionAgregar = document.getElementById("btnAccionAgregar");
+      if (!btnAccionAgregar) {
+        miNodo.appendChild(miNodoBtnAgregar);
+        btnAccionAgregar.addEventListener("click", crearProducto);
+      }
+
+      function crearProducto() {
+        const DOMid = id.value;
+        const DOMimg = "cocaZeroMini.jpg";
+        const DOMnombre = nombre.value;
+        const DOMprecio = precio.value;
+        const DOMcantidad = cantidad.value;
+        const nuevoProducto = new Productos(
+          DOMid,
+          DOMimg,
+          DOMnombre,
+          DOMprecio,
+          DOMcantidad
+        );
+        console.log(nuevoProducto);
+        inventario.push(nuevoProducto);
+        cardProducto.innerHTML = "";
+        productosCardRender();
+        guardarLocalStorage();
+      }
+      return;
+    }
   }
 };
 
+
+// BORRAR //
 const renderBtnBorrar = () => {
-  document.getElementById("inputDatos").innerHTML = "";
-  document.getElementById("cardProductos").innerHTML = "";
+  inputDatos.innerHTML = "";
+  cardProducto.innerHTML = "";
   productosCardRender();
-  const DOMinput = document.createElement("div");
-  DOMinput.innerHTML = `
-  <div>ID</div>
-  <input class="mb-1" type="number" id="prodId">
-  <input class="mb-1 btn-danger" type="submit" value="Borrar" id="btnAccionBorrar">
-  `;
-  inputDatos.append(DOMinput);
+  //BORRAR INPUT ESTRUCTURA
+  const miNodo = document.createElement("div");
+  miNodo.classList.add("my-1", "d-flex", "flex-column");
+  //TITULO ID
+  const miNodoTitulo = document.createElement("div");
+  miNodoTitulo.textContent = "ID";
+  //INPUT ID
+  const miNodoIdInput = document.createElement("input");
+  miNodoIdInput.classList.add("mb-1");
+  miNodoIdInput.setAttribute("type", "number");
+  miNodoIdInput.setAttribute("id", "prodId");
+  //BTN BORRAR
+  const miNodoBtnBorrar = document.createElement("button");
+  miNodoBtnBorrar.classList.add("m-1", "btn-danger");
+  miNodoBtnBorrar.setAttribute("type", "submit");
+  miNodoBtnBorrar.setAttribute("value", "Buscar");
+  miNodoBtnBorrar.setAttribute("id", "btnAccionBorrar");
+  miNodoBtnBorrar.textContent = "Borrar";
+  //INSERTAR MINODO
+  miNodo.appendChild(miNodoTitulo);
+  miNodo.appendChild(miNodoIdInput);
+  miNodo.appendChild(miNodoBtnBorrar);
+  inputDatos.appendChild(miNodo);
+
   const id = document.getElementById("prodId");
+  const btnAccionBorrar = document.getElementById("btnAccionBorrar");
   btnAccionBorrar.addEventListener("click", borrarProducto);
 
   function borrarProducto() {
-    const DOMid = parseInt(id.value);
-    const prodBorrar = inventario.find((prod) => prod.id === DOMid);
+    const prodBorrar = inventario.find(
+      (prod) => prod.id === parseInt(id.value)
+    );
     const indexId = inventario.indexOf(prodBorrar);
     if (indexId !== -1) {
       let elemento = indexId;
       inventario.splice(elemento, 1);
-      Swal.fire("producto Eliminado", "", "success");
+      Swal.fire(`Producto ID:${prodBorrar.id} </br> Eliminado`, "", "success");
     } else {
-      Swal.fire("No hay producto con esa ID", " ", "error");
+      Swal.fire(`No hay producto con ID:${id.value}`, " ", "error");
     }
-    document.getElementById("cardProductos").innerHTML = "";
-    productosCardRender();
-    guardarLocalStorage();
-  }
-};
-
-const renderBtnModificar = () => {
-  document.getElementById("inputDatos").innerHTML = "";
-  document.getElementById("cardProductos").innerHTML = "";
-  productosCardRender();
-  const DOMinput = document.createElement("div");
-  DOMinput.innerHTML = `
-  <div>ID</div>
-  <input class="mb-1" type="number" id="prodId">
-  <div>NOMBRE</div>
-  <input class="mb-1" type="text" id="nombre">
-  <div>PRECIO</div>
-  <input class="mb-1" type="number" id="precio">
-  <div>CANTIDAD</div>
-  <input class="mb-1" type="number" id="cantidad"><br>
-  <input class="mb-1 btn-info" type="submit" value="Modificar" id="btnAccionModificar">
-  `;
-  inputDatos.append(DOMinput);
-
-  const id = document.getElementById("prodId");
-  const nombre = document.getElementById("nombre");
-  const precio = document.getElementById("precio");
-  const cantidad = document.getElementById("cantidad");
-  btnAccionModificar.addEventListener("click", modificarProducto);
-  inputDatos.append(DOMinput);
-  function modificarProducto() {
-    let modificar = parseInt(id.value);
-    for (const producto of inventario) {
-      if (producto.id === modificar) {
-        producto.id = parseInt(id.value);
-        producto.img = "cocaZeroMini.jpg";
-        producto.nombre = nombre.value;
-        producto.precio = precio.value;
-        producto.cantidad = cantidad.value;
-      }
-    }
-    document.getElementById("cardProductos").innerHTML = "";
+    cardProducto.innerHTML = "";
     productosCardRender();
     guardarLocalStorage();
   }
@@ -196,8 +324,7 @@ function cargarLocalStorage() {
 
 //EvenListeners
 btnBuscar.addEventListener("click", renderBtnBuscar);
-btnAgregar.addEventListener("click", renderBtnAgregar);
-btnModificar.addEventListener("click", renderBtnModificar);
+btnAgregar.addEventListener("click", renderBtnAgregarModificar);
 btnBorrar.addEventListener("click", renderBtnBorrar);
 
 //EJECUCIONES
