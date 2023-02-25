@@ -43,7 +43,7 @@ const productosCardRender = (array = inventario) => {
     //ID PRODUCTO
     const miNodoId = document.createElement("p");
     miNodoId.classList.add("card-text");
-    miNodoId.textContent = `ID Producto:${producto.id}`;
+    miNodoId.textContent = `PROD ID: ${producto.id}`;
     //PRECIO
     const miNodoPrecio = document.createElement("p");
     miNodoPrecio.classList.add("card-text");
@@ -248,8 +248,7 @@ const renderBtnAgregarModificar = () => {
           DOMnombre,
           DOMprecio,
           DOMcantidad
-        );
-        console.log(nuevoProducto);
+        );        
         inventario.push(nuevoProducto);
         cardProducto.innerHTML = "";
         productosCardRender();
@@ -302,15 +301,26 @@ const renderBtnBorrar = () => {
     const prodBorrar = inventario.indexOf(findProd(id));
     /* const indexId = inventario.indexOf(prodBorrar); */
     if (prodBorrar !== -1) {
-      let elemento = prodBorrar;
-      inventario.splice(elemento, 1);
-      Swal.fire(`Producto Eliminado </br> ID:${id.value} `, "", "success");
+      Swal.fire({
+        title: `¿Quieres borrar el </br> PROD ID: ${id.value}?`,
+        showDenyButton: true,        
+        confirmButtonText: "Borrar",
+        denyButtonText: `Cancelar`,
+      }).then((result) => {        
+        if (result.isConfirmed) {
+          const prod = prodBorrar;
+          inventario.splice(prod, 1);
+          cardProducto.innerHTML = "";
+          productosCardRender();
+          guardarLocalStorage();
+          Swal.fire("Producto eliminado", "", "success");
+        } else if (result.isDenied) {
+          Swal.fire("Los cambios no se guardaron", "", "info");
+        }
+      });
     } else {
-      Swal.fire(`No existe producto </br> con ID:${id.value}`, " ", "error");
+      Swal.fire(`No existe el producto. </br> PROD ID: ${id.value}`, " ", "error");
     }
-    cardProducto.innerHTML = "";
-    productosCardRender();
-    guardarLocalStorage();
   }
 };
 
