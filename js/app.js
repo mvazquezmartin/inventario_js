@@ -207,7 +207,7 @@ const renderBtnAgregarModificar = () => {
       }
       btnAccionModificar.addEventListener("click", modificarProducto);
       function modificarProducto() {
-        let modificar = parseInt(id.value);
+        const modificar = parseInt(id.value);
         for (const producto of inventario) {
           if (producto.id === modificar) {
             producto.nombre = nombre.value;
@@ -237,7 +237,11 @@ const renderBtnAgregarModificar = () => {
       }
       btnAccionAgregar.addEventListener("click", crearProducto);
       function crearProducto() {
-        const DOMid = id.value;
+        if(findProd(id)){          
+          Swal.fire(`Existe el producto. </br> PROD ID: ${id.value}`, " ", "error");
+          return
+        }else{
+        const DOMid = id.value;                
         const DOMimg = "cocaZeroMini.jpg";
         const DOMnombre = nombre.value;
         const DOMprecio = precio.value;
@@ -248,7 +252,7 @@ const renderBtnAgregarModificar = () => {
           DOMnombre,
           DOMprecio,
           DOMcantidad
-        );        
+        );
         inventario.push(nuevoProducto);
         cardProducto.innerHTML = "";
         productosCardRender();
@@ -257,7 +261,7 @@ const renderBtnAgregarModificar = () => {
           `Nuevo Producto Agregado </br> Prod ID: ${id.value}`,
           "",
           "success"
-        );
+        )}
       }
       return;
     }
@@ -303,10 +307,10 @@ const renderBtnBorrar = () => {
     if (prodBorrar !== -1) {
       Swal.fire({
         title: `¿Quieres borrar el </br> PROD ID: ${id.value}?`,
-        showDenyButton: true,        
+        showDenyButton: true,
         confirmButtonText: "Borrar",
         denyButtonText: `Cancelar`,
-      }).then((result) => {        
+      }).then((result) => {
         if (result.isConfirmed) {
           const prod = prodBorrar;
           inventario.splice(prod, 1);
@@ -319,7 +323,11 @@ const renderBtnBorrar = () => {
         }
       });
     } else {
-      Swal.fire(`No existe el producto. </br> PROD ID: ${id.value}`, " ", "error");
+      Swal.fire(
+        `No existe el producto. </br> PROD ID: ${id.value}`,
+        " ",
+        "error"
+      );
     }
   }
 };
